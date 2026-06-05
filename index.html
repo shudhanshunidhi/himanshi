@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Himanshi Karn — UGC Creator</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0D0A08;
+    --surface: #161210;
+    --card: #1E1814;
+    --gold: #C9955A;
+    --gold-light: #E8C08A;
+    --rose: #D4847A;
+    --cream: #F5EEE6;
+    --muted: #7A6E65;
+    --border: #2A2420;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--cream);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* NOISE TEXTURE */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    background: linear-gradient(to bottom, rgba(13,10,8,0.95), transparent);
+  }
+
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--gold-light);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 120px 40px 80px;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,149,90,0.12) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .hero-ring {
+    position: absolute;
+    width: 700px;
+    height: 700px;
+    border: 1px solid rgba(201,149,90,0.08);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: ringPulse 4s ease-in-out infinite;
+  }
+
+  .hero-ring-2 {
+    width: 500px;
+    height: 500px;
+    border-color: rgba(201,149,90,0.05);
+    animation-delay: 2s;
+  }
+
+  @keyframes ringPulse {
+    0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.02); }
+  }
+
+  .hero-content { position: relative; z-index: 2; }
+
+  .hero-tag {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid rgba(201,149,90,0.3);
+    padding: 6px 16px;
+    margin-bottom: 32px;
+    animation: fadeUp 0.8s ease forwards;
+    opacity: 0;
+  }
+
+  .hero-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(56px, 10vw, 110px);
+    font-weight: 300;
+    line-height: 0.95;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+    animation: fadeUp 0.8s ease 0.2s forwards;
+    opacity: 0;
+  }
+
+  .hero-name em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+
+  .hero-name .lastname {
+    display: block;
+    font-weight: 600;
+    font-size: clamp(52px, 9vw, 100px);
+  }
+
+  .hero-sub {
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 24px 0 40px;
+    animation: fadeUp 0.8s ease 0.4s forwards;
+    opacity: 0;
+  }
+
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    margin-bottom: 48px;
+    animation: fadeUp 0.8s ease 0.6s forwards;
+    opacity: 0;
+  }
+
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--gold);
+    display: block;
+  }
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .hero-cta {
+    display: inline-flex;
+    gap: 16px;
+    animation: fadeUp 0.8s ease 0.8s forwards;
+    opacity: 0;
+  }
+
+  .btn-primary {
+    background: var(--gold);
+    color: var(--bg);
+    padding: 14px 32px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.3s, transform 0.2s;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+
+  .btn-outline {
+    border: 1px solid rgba(201,149,90,0.4);
+    color: var(--gold);
+    padding: 14px 32px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: border-color 0.3s, transform 0.2s;
+  }
+  .btn-outline:hover { border-color: var(--gold); transform: translateY(-2px); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SECTION COMMONS */
+  section {
+    padding: 100px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  .section-title em { font-style: italic; color: var(--gold-light); }
+
+  .divider {
+    width: 60px;
+    height: 1px;
+    background: var(--gold);
+    margin: 24px 0 48px;
+    opacity: 0.5;
+  }
+
+  /* ABOUT */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+
+  .about-photo {
+    position: relative;
+  }
+
+  .photo-placeholder {
+    aspect-ratio: 3/4;
+    background: var(--card);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--muted);
+    font-size: 13px;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .photo-placeholder::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(201,149,90,0.05) 0%, transparent 60%);
+  }
+
+  .photo-placeholder .icon { font-size: 40px; opacity: 0.3; }
+
+  .photo-corner {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border-color: var(--gold);
+    border-style: solid;
+    opacity: 0.5;
+  }
+  .photo-corner.tl { top: -8px; left: -8px; border-width: 2px 0 0 2px; }
+  .photo-corner.br { bottom: -8px; right: -8px; border-width: 0 2px 2px 0; }
+
+  .about-text p {
+    color: #9A8E85;
+    line-height: 1.9;
+    font-size: 15px;
+    margin-bottom: 20px;
+  }
+
+  .about-niches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 32px;
+  }
+
+  .niche-tag {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    transition: all 0.3s;
+  }
+  .niche-tag:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* PORTFOLIO */
+  .portfolio-section { max-width: 1100px; }
+
+  .portfolio-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0;
+  }
+
+  .tab-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: color 0.3s;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+  .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+  .tab-btn:hover { color: var(--cream); }
+
+  .portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .portfolio-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+  .portfolio-card:hover { transform: translateY(-4px); border-color: rgba(201,149,90,0.3); }
+
+  .portfolio-card:first-child {
+    grid-column: span 2;
+  }
+
+  .card-media {
+    aspect-ratio: 16/10;
+    background: linear-gradient(135deg, #1E1814 0%, #252018 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .portfolio-card:first-child .card-media { aspect-ratio: 16/9; }
+
+  .card-media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(13,10,8,0.8) 0%, transparent 50%);
+  }
+
+  .card-icon { font-size: 36px; opacity: 0.2; }
+
+  .card-upload-hint {
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--muted);
+    text-align: center;
+    opacity: 0.6;
+  }
+
+  .card-play {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    border: 1.5px solid rgba(201,149,90,0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    font-size: 16px;
+    z-index: 2;
+    transition: all 0.3s;
+  }
+  .portfolio-card:hover .card-play {
+    background: rgba(201,149,90,0.15);
+    border-color: var(--gold);
+  }
+
+  .card-info {
+    padding: 16px 18px;
+  }
+
+  .card-type {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+
+  .card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 6px;
+  }
+
+  .card-desc { font-size: 12px; color: var(--muted); }
+
+  /* SERVICES */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    margin-top: 0;
+  }
+
+  .service-card {
+    background: var(--card);
+    padding: 40px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .service-card:hover { border-color: rgba(201,149,90,0.2); }
+
+  .service-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 2px;
+    height: 0;
+    background: var(--gold);
+    transition: height 0.4s ease;
+  }
+  .service-card:hover::before { height: 100%; }
+
+  .service-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px;
+    font-weight: 300;
+    color: rgba(201,149,90,0.15);
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+
+  .service-icon { font-size: 28px; margin-bottom: 12px; }
+
+  .service-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 400;
+    margin-bottom: 10px;
+  }
+
+  .service-desc { font-size: 13px; color: var(--muted); line-height: 1.7; }
+
+  .service-price {
+    margin-top: 20px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--gold);
+  }
+
+  /* CONTACT */
+  .contact-section {
+    text-align: center;
+    padding: 100px 40px;
+    border-top: 1px solid var(--border);
+    position: relative;
+  }
+
+  .contact-glow {
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(201,149,90,0.08) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .contact-section .section-title { margin-bottom: 8px; }
+
+  .contact-sub {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 40px;
+    max-width: 440px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .contact-items {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+  }
+
+  .contact-item {
+    text-align: center;
+  }
+
+  .contact-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .contact-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    color: var(--gold-light);
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    color: var(--gold);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    section { padding: 70px 20px; }
+    .about-grid { grid-template-columns: 1fr; gap: 40px; }
+    .portfolio-grid { grid-template-columns: 1fr; }
+    .portfolio-card:first-child { grid-column: span 1; }
+    .services-grid { grid-template-columns: 1fr; }
+    .hero-stats { gap: 28px; }
+    .contact-items { gap: 28px; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">HK</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#portfolio">Work</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-ring"></div>
+  <div class="hero-ring hero-ring-2"></div>
+  <div class="hero-content">
+    <div class="hero-tag">UGC Creator · Nepal</div>
+    <h1 class="hero-name">
+      <em>Himanshi</em>
+      <span class="lastname">Karn</span>
+    </h1>
+    <p class="hero-sub">Skincare · Fashion · Food · Tech · Lifestyle</p>
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-num">4+</span>
+        <span class="stat-label">Content Niches</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">NP+EN</span>
+        <span class="stat-label">Bilingual</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">∞</span>
+        <span class="stat-label">Creativity</span>
+      </div>
+    </div>
+    <div class="hero-cta">
+      <a href="#portfolio" class="btn-primary">View My Work</a>
+      <a href="#contact" class="btn-outline">Work With Me</a>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about" style="max-width:1100px; margin:0 auto;">
+  <div class="section-label">About Me</div>
+  <div class="section-title">Authentic content that <em>converts</em></div>
+  <div class="divider"></div>
+  <div class="about-grid">
+    <div class="about-photo">
+      <div class="photo-placeholder">
+        <div class="icon">🤳</div>
+        <span style="font-size:11px; letter-spacing:2px; text-transform:uppercase;">Add Your Photo Here</span>
+      </div>
+      <div class="photo-corner tl"></div>
+      <div class="photo-corner br"></div>
+    </div>
+    <div class="about-text">
+      <p>Hi! I'm Himanshi — a UGC (User Generated Content) creator from Nepal. I create relatable, high-quality short-form videos and photos that help brands connect with real audiences.</p>
+      <p>I specialize in authentic content across skincare, fashion, food, lifestyle and tech — in both <strong style="color:var(--gold-light)">Nepali and English</strong>, giving brands access to a wider local audience.</p>
+      <p>My content isn't overly polished or corporate — it's real, genuine, and designed to make people stop scrolling and take action.</p>
+      <div class="about-niches">
+        <span class="niche-tag">✨ Skincare</span>
+        <span class="niche-tag">👗 Fashion</span>
+        <span class="niche-tag">☕ Food & Lifestyle</span>
+        <span class="niche-tag">📱 Tech</span>
+        <span class="niche-tag">🎬 Testimonials</span>
+        <span class="niche-tag">📦 Unboxing</span>
+        <span class="niche-tag">💄 GRWM</span>
+        <span class="niche-tag">🌿 Wellness</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section id="portfolio" style="max-width:1100px; margin:0 auto; padding-top:0;">
+  <div class="section-label">Portfolio</div>
+  <div class="section-title">Sample <em>Work</em></div>
+  <div class="divider"></div>
+
+  <div class="portfolio-tabs">
+    <button class="tab-btn active" onclick="filterTab(this, 'all')">All</button>
+    <button class="tab-btn" onclick="filterTab(this, 'skincare')">Skincare</button>
+    <button class="tab-btn" onclick="filterTab(this, 'fashion')">Fashion</button>
+    <button class="tab-btn" onclick="filterTab(this, 'food')">Food</button>
+    <button class="tab-btn" onclick="filterTab(this, 'tech')">Tech</button>
+  </div>
+
+  <div class="portfolio-grid">
+    <!-- Card 1 - Featured -->
+    <div class="portfolio-card">
+      <div class="card-media">
+        <div class="card-play">▶</div>
+        <div style="position:absolute; bottom:16px; left:16px; z-index:3;">
+          <div style="font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:4px;">Featured</div>
+          <div style="font-family:'Cormorant Garamond',serif; font-size:22px;">Skincare Routine Reel</div>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-type">Skincare · Testimonial</div>
+        <div class="card-desc">Morning skincare routine — product walkthrough with before/after. Add your video here.</div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="portfolio-card">
+      <div class="card-media" style="aspect-ratio:1/1;">
+        <div class="card-icon">👗</div>
+        <div class="card-upload-hint">Add fashion video</div>
+        <div class="card-play">▶</div>
+      </div>
+      <div class="card-info">
+        <div class="card-type">Fashion · OOTD</div>
+        <div class="card-title">Outfit of the Day</div>
+        <div class="card-desc">Styling reel showcasing outfit from brand.</div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="portfolio-card">
+      <div class="card-media" style="aspect-ratio:1/1;">
+        <div class="card-icon">📦</div>
+        <div class="card-upload-hint">Add unboxing video</div>
+        <div class="card-play">▶</div>
+      </div>
+      <div class="card-info">
+        <div class="card-type">Unboxing · Reaction</div>
+        <div class="card-title">Product Unboxing</div>
+        <div class="card-desc">Authentic first-impression unboxing content.</div>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="portfolio-card">
+      <div class="card-media" style="aspect-ratio:1/1;">
+        <div class="card-icon">☕</div>
+        <div class="card-upload-hint">Add food/cafe video</div>
+        <div class="card-play">▶</div>
+      </div>
+      <div class="card-info">
+        <div class="card-type">Food · Lifestyle</div>
+        <div class="card-title">Cafe Aesthetic Reel</div>
+        <div class="card-desc">Come-with-me style cafe & food content.</div>
+      </div>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="portfolio-card">
+      <div class="card-media" style="aspect-ratio:1/1;">
+        <div class="card-icon">📱</div>
+        <div class="card-upload-hint">Add tech demo video</div>
+        <div class="card-play">▶</div>
+      </div>
+      <div class="card-info">
+        <div class="card-type">Tech · Demo</div>
+        <div class="card-title">Gadget Demo</div>
+        <div class="card-desc">Clean product demo with lifestyle integration.</div>
+      </div>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="portfolio-card">
+      <div class="card-media" style="aspect-ratio:1/1;">
+        <div class="card-icon">💄</div>
+        <div class="card-upload-hint">Add GRWM video</div>
+        <div class="card-play">▶</div>
+      </div>
+      <div class="card-info">
+        <div class="card-type">Beauty · GRWM</div>
+        <div class="card-title">Get Ready With Me</div>
+        <div class="card-desc">Relatable morning routine featuring beauty products.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services" style="max-width:1100px; margin:0 auto; padding-top:40px;">
+  <div class="section-label">What I Offer</div>
+  <div class="section-title">Content <em>Packages</em></div>
+  <div class="divider"></div>
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-num">01</div>
+      <div class="service-icon">🎬</div>
+      <div class="service-name">Short-Form Video</div>
+      <div class="service-desc">Reels, TikToks, and short ads — testimonials, demos, unboxings, GRWM, and aesthetic b-roll. Delivered raw or edited.</div>
+      <div class="service-price">From NPR 2,000 / video</div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">02</div>
+      <div class="service-icon">📸</div>
+      <div class="service-name">Photo Content</div>
+      <div class="service-desc">Aesthetic product flat lays, lifestyle photos, and product-in-use shots for Instagram feeds and e-commerce pages.</div>
+      <div class="service-price">From NPR 1,000 / set</div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">03</div>
+      <div class="service-icon">🎙️</div>
+      <div class="service-name">Bilingual Content</div>
+      <div class="service-desc">Content in both Nepali and English — perfect for brands targeting diverse Nepali audiences across demographics.</div>
+      <div class="service-price">Available on request</div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">04</div>
+      <div class="service-icon">📦</div>
+      <div class="service-name">Content Bundle</div>
+      <div class="service-desc">Monthly content packages — consistent UGC delivered regularly for brands running ongoing social media ads.</div>
+      <div class="service-price">Custom pricing</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<div class="contact-section" id="contact">
+  <div class="contact-glow"></div>
+  <div style="position:relative; z-index:2;">
+    <div class="section-label">Let's Work Together</div>
+    <div class="section-title" style="font-size:clamp(32px,5vw,56px);">Ready to create <em>content</em><br>for your brand?</div>
+    <p class="contact-sub">Send me a message on Instagram or email me with your brief. I'd love to create authentic content for your brand.</p>
+    <div class="contact-items">
+      <div class="contact-item">
+        <div class="contact-label">Instagram</div>
+        <div class="contact-value">@himanshikarn</div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-label">Email</div>
+        <div class="contact-value">himanshi@email.com</div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-label">Based In</div>
+        <div class="contact-value">Madhesh, Nepal</div>
+      </div>
+    </div>
+    <a href="mailto:himanshi@email.com" class="btn-primary" style="text-decoration:none;">📩 Get In Touch</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Himanshi Karn</div>
+  <div>UGC Creator · Nepal · 2025</div>
+  <div>Available for brand collaborations</div>
+</footer>
+
+<script>
+  function filterTab(el, category) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
